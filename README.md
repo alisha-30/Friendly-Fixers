@@ -3,8 +3,8 @@
 FriendlyFixers is a premium, fully responsive single-page frontend application inspired by hyper-local service marketplaces like UrbanCompany. It connects users with certified, background-verified professionals for domestic needs like deep cleaning, appliance repairs, and salon services.
 
 ## 🚀 Live Demo
-Aap apni GitHub Pages ki live deployment link hosting ke baad yahan paste kar sakte hain:
-👉 **[Live Project Link](https://your-username.github.io/Friendly-Fixers/)**
+
+👉 **Live Project Link (https://alisha-30.github.io/Friendly-Fixers/)**
 
 ---
 
