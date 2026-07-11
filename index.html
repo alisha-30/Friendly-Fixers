@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friendly Fixers | Professional Home Services</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Global Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Navigation Bar -->
+    <header>
+        <div class="logo">Friendly<span>Fixers</span></div>
+        
+        <div class="search-container">
+            <input type="text" id="search-bar" placeholder="Search for services (e.g., AC, Sofa, Facial)..." oninput="handleSearch()">
+            <div id="suggestions-box" class="suggestions-hidden"></div>
+        </div>
+
+        <nav>
+            <a href="#" onclick="showSection('home')" id="nav-home" class="active">Home</a>
+            <a href="#" onclick="showSection('bookings')" id="nav-bookings">My Bookings</a>
+            
+            <!-- User Authentication Status Control Zone -->
+            <div id="auth-zone">
+                <button class="auth-trigger-btn" onclick="openAuthModal()">Login / Register</button>
+            </div>
+
+            <div class="cart-btn-nav" onclick="toggleCart()">
+                🛒 Cart (<span id="cart-count">0</span>)
+            </div>
+        </nav>
+    </header>
+
+    <!-- MAIN PLATFORM HUB -->
+    <main id="main-content">
+        
+        <!-- HOME INTERFACE SEGMENT -->
+        <div id="home-section" class="page-section">
+            <!-- Video Background Banner -->
+            <section class="hero">
+                <video autoplay loop muted playsinline class="hero-video">
+                    <source src="assets/home_services.mp4" type="video/mp4">
+                </video>
+                <div class="hero-overlay">
+                    <h1>Premium Home Services, On Demand</h1>
+                    <p>Book certified, background-verified professionals for all your domestic requirements.</p>
+                </div>
+            </section>
+
+            <!-- Value Proposition Trust Section -->
+            <section class="trust-bar">
+                <div class="trust-card"><span>🛡️</span> <h4>Verified Pros</h4><p>100% Background Checked</p></div>
+                <div class="trust-card"><span>💳</span> <h4>Transparent Pricing</h4><p>No hidden charges upfront</p></div>
+                <div class="trust-card"><span>⏱️</span> <h4>Quick Turnaround</h4><p>Service within 2 Hours</p></div>
+            </section>
+
+            <div class="app-layout">
+                <div class="categories-bar">
+                    <button class="cat-btn active" onclick="filterCategory('all')">All Services</button>
+                    <button class="cat-btn" onclick="filterCategory('cleaning')">🧹 Deep Cleaning</button>
+                    <button class="cat-btn" onclick="filterCategory('repair')">⚙️ Appliance Repairs</button>
+                    <button class="cat-btn" onclick="filterCategory('salon')">✂️ Salon & Grooming</button>
+                </div>
+
+                <!-- Services Container Grid -->
+                <div class="services-grid" id="services-grid"></div>
+            </div>
+
+            <!-- Dynamic Reviews System Layout -->
+            <section class="reviews-module">
+                <div class="reviews-header">
+                    <h2>Community Feedback & Logs</h2>
+                    <button class="primary-btn" onclick="openReviewSubmissionModal()">+ Leave a Review</button>
+                </div>
+                <div id="dynamic-reviews-container" class="reviews-layout-grid"></div>
+            </section>
+        </div>
+
+        <!-- DASHBOARD MANAGEMENT SYSTEM (MY BOOKINGS) -->
+        <div id="bookings-section" class="page-section hidden">
+            <h2>Your Operational Dashboard</h2>
+            <div class="bookings-tabs">
+                <button class="tab-btn active" onclick="switchBookingTab('active')">Active Orders</button>
+                <button class="tab-btn" onclick="switchBookingTab('past')">Service Logs History</button>
+            </div>
+            <div id="bookings-list" class="bookings-list"></div>
+        </div>
+
+    </main>
+
+    <!-- SIDEBAR DRAWER PANEL (CART) -->
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="sidebar-header">
+            <h3>Your Selected Cart</h3>
+            <span class="close-icon" onclick="toggleCart()">×</span>
+        </div>
+        <div class="sidebar-content" id="cart-items-container"></div>
+        <div class="sidebar-footer">
+            
+            <!-- Coupon Code Discount Interface -->
+            <div class="coupon-entry-wrapper">
+                <input type="text" id="coupon-input-field" placeholder="Enter coupon (e.g., FIXERS200)">
+                <button onclick="applyCouponValidation()">Apply</button>
+            </div>
+            <div id="coupon-status-msg"></div>
+
+            <div class="total-row">
+                <span>Net Total Payable:</span>
+                <strong>₹<span id="cart-total-amount">0</span></strong>
+            </div>
+            <button class="primary-btn full-width" onclick="openCheckout()">Proceed To Secure Checkout</button>
+        </div>
+    </div>
+
+    <!-- User Authentication Modal Structure -->
+    <div class="modal-overlay hidden" id="auth-modal">
+        <div class="modal-card">
+            <span class="close-modal" onclick="closeModal('auth-modal')">×</span>
+            <h3>Account Security Node</h3>
+            <div class="form-group">
+                <label>Registered Email Address</label>
+                <input type="email" id="auth-email-input" placeholder="name@college.edu">
+            </div>
+            <div class="form-group">
+                <label>Security Key (Password)</label>
+                <input type="password" id="auth-pass-input" placeholder="••••••••">
+            </div>
+            <button class="success-btn" onclick="executeMockAuthLogin()">Access Profile</button>
+        </div>
+    </div>
+
+    <!-- MULTI-STEP CHECKOUT CORE PIPELINE LAYOUT -->
+    <div class="modal-overlay hidden" id="checkout-modal">
+        <div class="modal-card checkout-card">
+            <span class="close-modal" onclick="closeModal('checkout-modal')">×</span>
+            
+            <div class="checkout-steps">
+                <div class="step-indicator active" id="step-dot-1">1. Address</div>
+                <div class="step-indicator" id="step-dot-2">2. Schedule</div>
+                <div class="step-indicator" id="step-dot-3">3. Payment</div>
+            </div>
+
+            <!-- Step 1: Address -->
+            <div class="checkout-step-content" id="checkout-step-1">
+                <h3>Destination Dispatch Details</h3>
+                <div class="form-group">
+                    <label>House/Flat No., Building Name</label>
+                    <input type="text" id="address-line1" placeholder="e.g., Flat 405, Block B, Royal Heights">
+                </div>
+                <div class="form-group">
+                    <label>Locality, Landmark or Street</label>
+                    <input type="text" id="address-line2" placeholder="e.g., Near City Center Metro Station">
+                </div>
+                <button class="primary-btn right-align" onclick="nextCheckoutStep(2)">Next: Schedule Slots</button>
+            </div>
+
+            <!-- Step 2: Date Selection -->
+            <div class="checkout-step-content hidden" id="checkout-step-2">
+                <h3>Select Date & Timings</h3>
+                <div class="form-group">
+                    <label>Preferred Date</label>
+                    <input type="date" id="booking-date">
+                </div>
+                <div class="form-group">
+                    <label>Preferred Available Slot</label>
+                    <select id="booking-time">
+                        <option value="09:00 AM - 12:00 PM">Morning (09:00 AM - 12:00 PM)</option>
+                        <option value="12:00 PM - 03:00 PM">Afternoon (12:00 PM - 03:00 PM)</option>
+                        <option value="03:00 PM - 06:00 PM">Evening (03:00 PM - 06:00 PM)</option>
+                    </select>
+                </div>
+                <div class="btn-row">
+                    <button class="secondary-btn" onclick="prevCheckoutStep(1)">Back</button>
+                    <button class="primary-btn" onclick="nextCheckoutStep(3)">Next: Compute Ledger</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Payment Simulation -->
+            <div class="checkout-step-content hidden" id="checkout-step-3">
+                <h3>Secure Gateway Verification</h3>
+                <div class="payment-options">
+                    <label class="payment-radio">
+                        <input type="radio" name="payment-method" value="COD" checked>
+                        <span>💵 Cash on Delivery</span>
+                    </label>
+                    <label class="payment-radio">
+                        <input type="radio" name="payment-method" value="Paytm">
+                        <span>📱 Paytm Wallet / Postpaid</span>
+                    </label>
+                    <label class="payment-radio">
+                        <input type="radio" name="payment-method" value="UPI">
+                        <span>💸 Google Pay / PhonePe / BHIM UPI</span>
+                    </label>
+                    <label class="payment-radio">
+                        <input type="radio" name="payment-method" value="Card">
+                        <span>💳 Credit / Debit Card</span>
+                    </label>
+                </div>
+                <div class="summary-box">
+                    <p>Total Payable Net Amount: <strong>₹<span id="checkout-total-amount">0</span></strong></p>
+                </div>
+                <div class="btn-row">
+                    <button class="secondary-btn" onclick="prevCheckoutStep(2)">Back</button>
+                    <button class="success-btn" onclick="confirmFinalBooking()">Confirm Booking</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay hidden" id="invoice-modal">
+      <div class="modal-card print-ready-card" style="max-width: 550px; padding: 30px;">
+        <div id="invoice-modal-content-area"></div>
+        <div class="btn-row" style="margin-top: 25px;">
+            <button class="secondary-btn" onclick="closeModal('invoice-modal')">Close Window</button>
+            <button class="primary-btn" onclick="window.print()">🖨️ Print Receipt</button>
+        </div>
+       </div>
+    </div>
+
+    <!-- Review Submission Form Component -->
+    <div class="modal-overlay hidden" id="review-write-modal">
+        <div class="modal-card">
+            <span class="close-modal" onclick="closeModal('review-write-modal')">×</span>
+            <h3>Post Customer Feedback Node</h3>
+            <div class="form-group">
+                <label>Your Name</label>
+                <input type="text" id="rev-name-input" placeholder="e.g., Anjali Aggarwal">
+            </div>
+            <div class="form-group">
+                <label>Rating Evaluation Scale</label>
+                <select id="rev-rating-input">
+                    <option value="5">⭐⭐⭐⭐⭐ (5 Stars)</option>
+                    <option value="4">⭐⭐⭐⭐ (4 Stars)</option>
+                    <option value="3">⭐ ⭐ ⭐ (3 Stars)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Review Commentary logs</label>
+                <input type="text" id="rev-text-input" placeholder="Share your experience detailing service execution...">
+            </div>
+            <button class="success-btn" onclick="submitReviewRuntimeEntry()">Publish Feedback Data Node</button>
+        </div>
+    </div>
+
+    <!-- SERVICE GENERAL DETAILS MODAL -->
+    <div class="modal-overlay hidden" id="detail-modal">
+        <div class="modal-card">
+            <span class="close-modal" onclick="closeModal('detail-modal')">×</span>
+            <div id="detail-modal-body"></div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h3>Friendly<span>Fixers</span></h3>
+                <p>FriendlyFixers is India's leading on-demand hyperlocal home services marketplace. We connect users with top-rated, certified, and background-verified professionals for everyday household needs.</p>
+                <div class="footer-socials">
+                    <span>🌐 www.friendlyfixers.com</span>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Popular Services</h4>
+                <a href="#" onclick="filterCategory('cleaning')">Sofa & Home Cleaning</a>
+                <a href="#" onclick="filterCategory('repair')">AC Service & Repairs</a>
+                <a href="#" onclick="filterCategory('salon')">Men's Grooming & Salon</a>
+                <a href="#" onclick="filterCategory('repair')">Washing Machine Repair</a>
+            </div>
+            <div class="footer-links">
+                <h4>Company Info</h4>
+                <a href="#">About Corporate Team</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Privacy Policy Rules</a>
+                <a href="#">Contact Support Desk</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 FriendlyFixers Marketplace Networks. All Rights Reserved. Designed with Clean Frontend Integrity.
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
